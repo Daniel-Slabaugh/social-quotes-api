@@ -93,7 +93,7 @@ router.post('/', jsonParser, (req, res) => {
     }
 
     let {username, password, firstName = '', lastName = ''} = req.body;
-    // Username and password come in pre-trimmed, otherwise we throw an error
+    // username and password come in pre-trimmed, otherwise we throw an error
     // before this
     firstName = firstName.trim();
     lastName = lastName.trim();
@@ -106,7 +106,7 @@ router.post('/', jsonParser, (req, res) => {
                 return Promise.reject({
                     code: 422,
                     reason: 'ValidationError',
-                    message: 'Username already taken',
+                    message: 'username already taken',
                     location: 'username'
                 });
             }
@@ -130,6 +130,7 @@ router.post('/', jsonParser, (req, res) => {
             if (err.reason === 'ValidationError') {
                 return res.status(err.code).json(err);
             }
+            console.log(err);
             res.status(500).json({code: 500, message: 'Internal server error'});
         });
 });

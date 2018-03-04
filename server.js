@@ -13,7 +13,7 @@ const passport = require('passport');
 // console.log(jimmy); // Stewart - the variable name is jimmy, not james
 // console.log(bobby); // De Niro - the variable name is bobby, not robert
 const {router: usersRouter} = require('./users');
-const {router: authRouter, basicStrategy, jwtStrategy} = require('./auth');
+const {router: authRouter, localStrategy, jwtStrategy} = require('./auth');
 
 mongoose.Promise = global.Promise;
 
@@ -36,7 +36,7 @@ app.use(function(req, res, next) {
 });
 
 app.use(passport.initialize());
-passport.use(basicStrategy);
+passport.use(localStrategy);
 passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);

@@ -15,7 +15,7 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('Protected endpoint', function() {
-    const username = 'exampleUser';
+    const email = 'exampleUser';
     const password = 'examplePass';
     const firstName = 'Example';
     const lastName = 'User';
@@ -31,7 +31,7 @@ describe('Protected endpoint', function() {
     beforeEach(function() {
         return User.hashPassword(password).then(password =>
             User.create({
-                username,
+                email,
                 password,
                 firstName,
                 lastName
@@ -64,7 +64,7 @@ describe('Protected endpoint', function() {
         it('Should reject requests with an invalid token', function() {
             const token = jwt.sign(
                 {
-                    username,
+                    email,
                     firstName,
                     lastName
                 },
@@ -95,7 +95,7 @@ describe('Protected endpoint', function() {
             const token = jwt.sign(
                 {
                     user: {
-                        username,
+                        email,
                         firstName,
                         lastName
                     },
@@ -104,7 +104,7 @@ describe('Protected endpoint', function() {
                 JWT_SECRET,
                 {
                     algorithm: 'HS256',
-                    subject: username
+                    subject: email
                 }
             );
 
@@ -128,7 +128,7 @@ describe('Protected endpoint', function() {
             const token = jwt.sign(
                 {
                     user: {
-                        username,
+                        email,
                         firstName,
                         lastName
                     }
@@ -136,7 +136,7 @@ describe('Protected endpoint', function() {
                 JWT_SECRET,
                 {
                     algorithm: 'HS256',
-                    subject: username,
+                    subject: email,
                     expiresIn: '7d'
                 }
             );
