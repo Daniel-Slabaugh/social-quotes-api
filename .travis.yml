@@ -6,7 +6,7 @@ deploy:
   provider: heroku
   api_key:
     secure: 332ba3ad-bb27-409e-bc83-816d6e7c0cb4
-  app: social-quote-api
+  app: social-quotes-api
   on: 
-    repo: Daniel-Slabaugh/social-quote-api
+    repo: Daniel-Slabaugh/social-quotes-api
   skip_cleanup: true
