@@ -1,4 +1,12 @@
- language: node_js
- node_js: node
- services:
-     - mongodb
+language: node_js
+node_js: node
+services:
+- mongodb
+deploy: 
+  provider: heroku
+  api_key:
+    secure: 332ba3ad-bb27-409e-bc83-816d6e7c0cb4
+  app: social-quote-api
+  on: 
+    repo: Daniel-Slabaugh/social-quote-api
+  skip_cleanup: true
