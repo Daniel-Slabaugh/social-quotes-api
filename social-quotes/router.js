@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 
-const {User} = require('./models');
+const {Quote} = require('./models');
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ const jsonParser = bodyParser.json();
 
 // Post to create a new quote
 router.post('/', jsonParser, (req, res) => {
-    const requiredFields = ['username', 'password'];
+    const requiredFields = ['quote', 'user'];
     const missingField = requiredFields.find(field => !(field in req.body));
 
     if (missingField) {
@@ -22,20 +22,11 @@ router.post('/', jsonParser, (req, res) => {
         });
     }
 
-    const stringFields = ['username', 'password', 'firstName', 'lastName'];
-    const nonStringField = stringFields.find(
-        field => field in req.body && typeof req.body[field] !== 'string'
-    );
+    const stringFields = ['quote', 'user', 'reference'];
 
-    if (nonStringField) {
-        return res.status(422).json({
-            code: 422,
-            reason: 'ValidationError',
-            message: 'Incorrect field type: expected string',
-            location: nonStringField
-        });
-    }
 
+    // Need to check: if quote exists. If username matches previous user in database
+    // 
     // If the username and password aren't trimmed we give an error.  Users might
     // expect that these will work without trimming (i.e. they want the password
     // "foobar ", including the space at the end).  We need to reject such values
