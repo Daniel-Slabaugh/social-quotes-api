@@ -15,11 +15,11 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('/api/user', function() {
-    const email = 'exampleUser';
+    const username = 'exampleUser';
     const password = 'examplePass';
     const firstName = 'Example';
     const lastName = 'User';
-    const emailB = 'exampleUserB';
+    const usernameB = 'exampleUserB';
     const passwordB = 'examplePassB';
     const firstNameB = 'ExampleB';
     const lastNameB = 'UserB';
@@ -40,7 +40,7 @@ describe('/api/user', function() {
 
     describe('/api/users', function() {
         describe('POST', function() {
-            it('Should reject users with missing email', function() {
+            it('Should reject users with missing username', function() {
                 return chai
                     .request(app)
                     .post('/api/users')
@@ -61,7 +61,7 @@ describe('/api/user', function() {
                         expect(res).to.have.status(422);
                         expect(res.body.reason).to.equal('ValidationError');
                         expect(res.body.message).to.equal('Missing field');
-                        expect(res.body.location).to.equal('email');
+                        expect(res.body.location).to.equal('username');
                     });
             });
             it('Should reject users with missing password', function() {
@@ -69,7 +69,7 @@ describe('/api/user', function() {
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email,
+                        username,
                         firstName,
                         lastName
                     })
@@ -88,12 +88,12 @@ describe('/api/user', function() {
                         expect(res.body.location).to.equal('password');
                     });
             });
-            it('Should reject users with non-string email', function() {
+            it('Should reject users with non-string username', function() {
                 return chai
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email: 1234,
+                        username: 1234,
                         password,
                         firstName,
                         lastName
@@ -112,7 +112,7 @@ describe('/api/user', function() {
                         expect(res.body.message).to.equal(
                             'Incorrect field type: expected string'
                         );
-                        expect(res.body.location).to.equal('email');
+                        expect(res.body.location).to.equal('username');
                     });
             });
             it('Should reject users with non-string password', function() {
@@ -120,7 +120,7 @@ describe('/api/user', function() {
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email,
+                        username,
                         password: 1234,
                         firstName,
                         lastName
@@ -147,7 +147,7 @@ describe('/api/user', function() {
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email,
+                        username,
                         password,
                         firstName: 1234,
                         lastName
@@ -174,7 +174,7 @@ describe('/api/user', function() {
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email,
+                        username,
                         password,
                         firstName,
                         lastName: 1234
@@ -196,12 +196,12 @@ describe('/api/user', function() {
                         expect(res.body.location).to.equal('lastName');
                     });
             });
-            it('Should reject users with non-trimmed email', function() {
+            it('Should reject users with non-trimmed username', function() {
                 return chai
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email: ` ${email} `,
+                        username: ` ${username} `,
                         password,
                         firstName,
                         lastName
@@ -220,7 +220,7 @@ describe('/api/user', function() {
                         expect(res.body.message).to.equal(
                             'Cannot start or end with whitespace'
                         );
-                        expect(res.body.location).to.equal('email');
+                        expect(res.body.location).to.equal('username');
                     });
             });
             it('Should reject users with non-trimmed password', function() {
@@ -228,7 +228,7 @@ describe('/api/user', function() {
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email,
+                        username,
                         password: ` ${password} `,
                         firstName,
                         lastName
@@ -250,12 +250,12 @@ describe('/api/user', function() {
                         expect(res.body.location).to.equal('password');
                     });
             });
-            it('Should reject users with empty email', function() {
+            it('Should reject users with empty username', function() {
                 return chai
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email: '',
+                        username: '',
                         password,
                         firstName,
                         lastName
@@ -274,7 +274,7 @@ describe('/api/user', function() {
                         expect(res.body.message).to.equal(
                             'Must be at least 1 characters long'
                         );
-                        expect(res.body.location).to.equal('email');
+                        expect(res.body.location).to.equal('username');
                     });
             });
             it('Should reject users with password less than ten characters', function() {
@@ -282,7 +282,7 @@ describe('/api/user', function() {
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email,
+                        username,
                         password: '123456789',
                         firstName,
                         lastName
@@ -309,7 +309,7 @@ describe('/api/user', function() {
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email,
+                        username,
                         password: new Array(73).fill('a').join(''),
                         firstName,
                         lastName
@@ -331,18 +331,18 @@ describe('/api/user', function() {
                         expect(res.body.location).to.equal('password');
                     });
             });
-            it('Should reject users with duplicate email', function() {
+            it('Should reject users with duplicate username', function() {
                 // Create an initial user
                 return User.create({
-                    email,
+                    username,
                     password,
                     firstName,
                     lastName
                 })
                     .then(() =>
-                        // Try to create a second user with the same email
+                        // Try to create a second user with the same username
                         chai.request(app).post('/api/users').send({
-                            email,
+                            username,
                             password,
                             firstName,
                             lastName
@@ -360,9 +360,9 @@ describe('/api/user', function() {
                         expect(res).to.have.status(422);
                         expect(res.body.reason).to.equal('ValidationError');
                         expect(res.body.message).to.equal(
-                            'email already taken'
+                            'username already taken'
                         );
-                        expect(res.body.location).to.equal('email');
+                        expect(res.body.location).to.equal('username');
                     });
             });
             it('Should create a new user', function() {
@@ -370,7 +370,7 @@ describe('/api/user', function() {
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email,
+                        username,
                         password,
                         firstName,
                         lastName
@@ -379,15 +379,15 @@ describe('/api/user', function() {
                         expect(res).to.have.status(201);
                         expect(res.body).to.be.an('object');
                         expect(res.body).to.have.keys(
-                            'email',
+                            'username',
                             'firstName',
                             'lastName'
                         );
-                        expect(res.body.email).to.equal(email);
+                        expect(res.body.username).to.equal(username);
                         expect(res.body.firstName).to.equal(firstName);
                         expect(res.body.lastName).to.equal(lastName);
                         return User.findOne({
-                            email
+                            username
                         });
                     })
                     .then(user => {
@@ -405,7 +405,7 @@ describe('/api/user', function() {
                     .request(app)
                     .post('/api/users')
                     .send({
-                        email,
+                        username,
                         password,
                         firstName: ` ${firstName} `,
                         lastName: ` ${lastName} `
@@ -414,15 +414,15 @@ describe('/api/user', function() {
                         expect(res).to.have.status(201);
                         expect(res.body).to.be.an('object');
                         expect(res.body).to.have.keys(
-                            'email',
+                            'username',
                             'firstName',
                             'lastName'
                         );
-                        expect(res.body.email).to.equal(email);
+                        expect(res.body.username).to.equal(username);
                         expect(res.body.firstName).to.equal(firstName);
                         expect(res.body.lastName).to.equal(lastName);
                         return User.findOne({
-                            email
+                            username
                         });
                     })
                     .then(user => {
@@ -444,13 +444,13 @@ describe('/api/user', function() {
             it('Should return an array of users', function() {
                 return User.create(
                     {
-                        email,
+                        username,
                         password,
                         firstName,
                         lastName
                     },
                     {
-                        email: emailB,
+                        username: usernameB,
                         password: passwordB,
                         firstName: firstNameB,
                         lastName: lastNameB
@@ -462,12 +462,12 @@ describe('/api/user', function() {
                         expect(res.body).to.be.an('array');
                         expect(res.body).to.have.length(2);
                         expect(res.body[0]).to.deep.equal({
-                            email,
+                            username,
                             firstName,
                             lastName
                         });
                         expect(res.body[1]).to.deep.equal({
-                            email: emailB,
+                            username: usernameB,
                             firstName: firstNameB,
                             lastName: lastNameB
                         });

@@ -1,4 +1,4 @@
-global.DATABASE_URL = 'mongodb://localhost/jwt-auth-demo-test';
+global.DATABASE_URL = 'mongodb://localhost/social-quotes-demo-test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const jwt = require('jsonwebtoken');
@@ -15,7 +15,7 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('Auth endpoints', function() {
-    const email = 'exampleUser';
+    const username = 'exampleUser';
     const password = 'examplePass';
     const firstName = 'Example';
     const lastName = 'User';
@@ -31,7 +31,7 @@ describe('Auth endpoints', function() {
     beforeEach(function() {
         return User.hashPassword(password).then(password =>
             User.create({
-                email,
+                username,
                 password,
                 firstName,
                 lastName
@@ -57,14 +57,14 @@ describe('Auth endpoints', function() {
                     }
 
                     const res = err.response;
-                    expect(res).to.have.status(401);
+                    expect(res).to.have.status(400);
                 });
         });
-        it('Should reject requests with incorrect emails', function() {
+        it('Should reject requests with incorrect usernames', function() {
             return chai
                 .request(app)
                 .post('/api/auth/login')
-                .auth('wrongEmail', password)
+                .auth('wrongusername', password)
                 .then(() =>
                     expect.fail(null, null, 'Request should not succeed')
                 )
@@ -74,14 +74,14 @@ describe('Auth endpoints', function() {
                     }
 
                     const res = err.response;
-                    expect(res).to.have.status(401);
+                    expect(res).to.have.status(400);
                 });
         });
         it('Should reject requests with incorrect passwords', function() {
             return chai
                 .request(app)
                 .post('/api/auth/login')
-                .auth(email, 'wrongPassword')
+                .auth(username, 'wrongPassword')
                 .then(() =>
                     expect.fail(null, null, 'Request should not succeed')
                 )
@@ -91,14 +91,14 @@ describe('Auth endpoints', function() {
                     }
 
                     const res = err.response;
-                    expect(res).to.have.status(401);
+                    expect(res).to.have.status(400);
                 });
         });
         it('Should return a valid auth token', function() {
             return chai
                 .request(app)
                 .post('/api/auth/login')
-                .auth(email, password)
+                .send({username, password})
                 .then(res => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.an('object');
@@ -108,7 +108,7 @@ describe('Auth endpoints', function() {
                         algorithm: ['HS256']
                     });
                     expect(payload.user).to.deep.equal({
-                        email,
+                        username,
                         firstName,
                         lastName
                     });
@@ -136,7 +136,7 @@ describe('Auth endpoints', function() {
         it('Should reject requests with an invalid token', function() {
             const token = jwt.sign(
                 {
-                    email,
+                    username,
                     firstName,
                     lastName
                 },
@@ -167,7 +167,7 @@ describe('Auth endpoints', function() {
             const token = jwt.sign(
                 {
                     user: {
-                        email,
+                        username,
                         firstName,
                         lastName
                     },
@@ -176,7 +176,7 @@ describe('Auth endpoints', function() {
                 JWT_SECRET,
                 {
                     algorithm: 'HS256',
-                    subject: email
+                    subject: username
                 }
             );
 
@@ -200,7 +200,7 @@ describe('Auth endpoints', function() {
             const token = jwt.sign(
                 {
                     user: {
-                        email,
+                        username,
                         firstName,
                         lastName
                     }
@@ -208,7 +208,7 @@ describe('Auth endpoints', function() {
                 JWT_SECRET,
                 {
                     algorithm: 'HS256',
-                    subject: email,
+                    subject: username,
                     expiresIn: '7d'
                 }
             );
@@ -227,7 +227,7 @@ describe('Auth endpoints', function() {
                         algorithm: ['HS256']
                     });
                     expect(payload.user).to.deep.equal({
-                        email,
+                        username,
                         firstName,
                         lastName
                     });
