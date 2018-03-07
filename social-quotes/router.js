@@ -9,19 +9,25 @@ const router = express.Router();
 const jsonParser = bodyParser.json();
 
 // Get all of user's quotes
-router.get('/', (req, res) => {
+router.get('/', 
+    passport.authenticate('jwt', {session: false}), 
+    (req, res) => {
     Quote.find()
         .then(quotes => res.status(200).json(quotes))
         .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
-router.get('/:searchTerm', (req, res) => {
+// Get quotes based on search
+router.get('/:searchTerm', 
+    passport.authenticate('jwt', {session: false}),
+    (req, res) => {
     let searchTerm = req.params.searchTerm;
     Quote.find(searchTerm)
         .then(count => {
             if (count > 0) {
                 return res.status(200).json(quotes);
             } else {
+                //ask about code i should be using
                 return res.status(204).json({message: 'Nothing matching Search'});
             }
         })
@@ -29,7 +35,10 @@ router.get('/:searchTerm', (req, res) => {
 });
 
 // Post to create a new quote
-router.post('/', jsonParser, (req, res) => {
+router.post('/', 
+    jsonParser, 
+    passport.authenticate('jwt', {session: false}), 
+    (req, res) => {
     const requiredFields = ['quote', 'user'];
     const missingField = requiredFields.find(field => !(field in req.body));
     if (missingField) {
@@ -76,5 +85,7 @@ router.post('/', jsonParser, (req, res) => {
             res.status(500).json({code: 500, message: 'Internal server error'});
         });
 });
+
+
 
 module.exports = {router};
