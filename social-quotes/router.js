@@ -17,13 +17,12 @@ router.get('/', (req, res) => {
 
 router.get('/:searchTerm', (req, res) => {
     let searchTerm = req.params.searchTerm;
-    Quote.find(searchTerm);
+    Quote.find(searchTerm)
         .then(count => {
             if (count > 0) {
                 return res.status(200).json(quotes);
             } else {
                 return res.status(204).json({message: 'Nothing matching Search'});
-
             }
         })
         .catch(err => res.status(500).json({message: 'Internal server error'}));
@@ -56,7 +55,7 @@ router.post('/', jsonParser, (req, res) => {
                 });
             }
         })
-        .then(
+        .then(create => {
             return Quote.create({
                 quote,
                 user,
