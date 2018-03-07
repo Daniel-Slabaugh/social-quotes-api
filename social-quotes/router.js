@@ -52,7 +52,8 @@ router.post('/',
 
     let {quote, user, reference = '', tags = []} = req.body;
 
-    return Quote.find({quote})
+    Quote
+        .find({quote})
         .count()
         .then(count => {
             if (count > 0) {
@@ -64,13 +65,11 @@ router.post('/',
                 });
             }
         })
-        .then(create => {
-            return Quote.create({
-                quote,
-                user,
-                reference,
-                tags
-            });
+        .create({
+            quote: req.body.quote,
+            user: req.body.user,
+            reference: req.body.reference,
+            tags: req.body.tags
         })
         .then(quote => {
             return res.status(201).json(quote);
