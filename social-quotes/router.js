@@ -118,10 +118,10 @@ router.put('/:id',
 router.delete('/:id',
   passport.authenticate('jwt', {session: false}), 
   (req, res) => {
-  Sailboat
+  Quote
     .findByIdAndRemove(req.params.id)
     .exec()
-    .then(sailboat => res.status(204).end())
+    .then(quote => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
