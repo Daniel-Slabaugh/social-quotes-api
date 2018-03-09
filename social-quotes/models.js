@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-const QuoteSchema = mongoose.Schema({
+const quoteSchema = mongoose.Schema({
     quote: {
         type: String,
         required: true,
@@ -16,6 +16,17 @@ const QuoteSchema = mongoose.Schema({
     tags: {type: Array, default: ''}
 });
 
-const Quote = mongoose.model('Quote', QuoteSchema);
+
+quoteSchema.methods.quoteWithID = function() {
+  return {
+    id: this._id,
+    quote: this.quote,
+    user: this.user,
+    reference: this.reference,
+    tags: this.tags
+  };
+}
+
+const Quote = mongoose.model('Quote', quoteSchema);
 
 module.exports = {Quote};

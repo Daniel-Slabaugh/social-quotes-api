@@ -13,7 +13,7 @@ router.get('/',
     passport.authenticate('jwt', {session: false}), 
     (req, res) => {
     Quote.find()
-        .then(quotes => res.status(200).json(quotes))
+        .then(quotes => res.status(200).json(quotes.map(quote => quote.quoteWithID())))
         .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 

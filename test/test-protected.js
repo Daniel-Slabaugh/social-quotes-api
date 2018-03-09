@@ -1,4 +1,4 @@
-global.DATABASE_URL = 'mongodb://localhost/jwt-auth-demo-test';
+global.DATABASE_URL = 'mongodb://localhost/social-quotes-demo-test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const jwt = require('jsonwebtoken');
