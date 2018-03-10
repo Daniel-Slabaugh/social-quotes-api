@@ -31,7 +31,7 @@ function seedQuoteData() {
 			quote: faker.lorem.sentence(), 
 			user: faker.internet.email(),
 			reference: faker.name.firstName() + faker.name.lastName(),
-			tags:  faker.random.words()
+			tags:  [faker.random.words(), faker.random.words()]
 		});
 	}
 	// this will return a promise
@@ -136,7 +136,7 @@ describe('Quote server resource', function() {
 				quote: faker.lorem.sentence(), 
 				user: faker.internet.email(),
 				reference: faker.name.firstName() + faker.name.lastName(),
-				tags:  faker.random.words()
+				tags:  [faker.random.words(), faker.random.words()]
 			}
 
 			return chai.request(app)
@@ -147,18 +147,22 @@ describe('Quote server resource', function() {
 					res.should.have.status(201);
 					res.should.be.json;
 					res.body.should.be.a('object');
-					res.body.should.include.keys('id', 'quote', 'user', 'reference', 'tags');
+					res.body.should.include.keys('_id', 'quote', 'user', 'reference', 'tags');
 					res.body.quote.should.equal(newQuote.quote)
-					res.body.id.should.not.be.null;
+					res.body._id.should.not.be.null;
 					res.body.user.should.equal(newQuote.user);
 
-				// 	return Quote.findById(res.body.id);
-				// })
-				// .then(function(quote) {
-				// 	quote.quote.should.equal(newQuote.quote);
-				// 	quote.user.should.equal(newQuote.user);
-				// 	quote.reference.should.equal(newQuote.reference);
-				// 	quote.tags.should.equal(newQuote.description);
+					return Quote.findById(res.body._id);
+				})
+				.then(function(quote) {
+					quote.quote.should.equal(newQuote.quote);
+					quote.user.should.equal(newQuote.user);
+					quote.reference.should.equal(newQuote.reference);
+					quote.tags.should.deep.equal(newQuote.tags);
+
+					// quote.tags.map(tag => tag.should.equal(newQuote.tags))
+					// quote.tags.should.equal(newQuote.tags);
+					console.log("tags " + newQuote.tags);
 				});
 		});
 	});
@@ -170,7 +174,7 @@ describe('Quote server resource', function() {
 				quote: faker.lorem.sentence(), 
 				user: faker.internet.email(),
 				reference: faker.name.firstName() + faker.name.lastName(),
-				tags:  faker.random.words()
+				tags:  [faker.random.words(), faker.random.words()]
 			};
 
 			return Quote
@@ -178,6 +182,9 @@ describe('Quote server resource', function() {
 				.exec()
 				.then(function(quote) {
 					updateData.id = quote.id;
+					console.log("quote id " + quote.id);
+					console.log("updateData id " + updateData.id);
+					console.log(updateData);
 
 					return chai
 						.request(app)
@@ -186,14 +193,14 @@ describe('Quote server resource', function() {
 						.send(updateData);
 				})
 				.then(function(res) {
-					res.should.have.status(204);
+					res.should.have.status(201);
 
 					return Quote.findById(updateData.id).exec();
 				})
 				.then(function(quote) {
 					quote.quote.should.equal(updateData.quote);
 					quote.reference.should.equal(updateData.reference);
-					quote.tags.should.equal(updateData.tags);
+					quote.tags.should.deep.equal(updateData.tags);
 				});
 		});
 	});
